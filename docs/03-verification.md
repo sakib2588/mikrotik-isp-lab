@@ -120,3 +120,32 @@ traceroute probes, expected and harmless. Screenshot:
 No `X` flag on the DHCP server row --- enabled. No client attached to `cust-lan` yet, so
 `used=0` is expected; the pool and server exist and are correctly configured, which is what
 this step actually verifies. Screenshot: `screenshots/task07-03-end-to-end-ping-traceroute-dhcp.png`.
+
+## Task 8 --- VLAN-tagged access
+
+Moved the PPPoE server (CHR-PE) and client (CHR-CPE) from untagged `ether3`/`ether1` onto
+tagged VLAN 100 on both ends. The session dropped and re-dialed automatically the moment
+the server moved --- expected, not a fault.
+
+**On CHR-PE after the move** --- `/ppp active print`:
+
+```
+#  NAME     SERVICE  CALLER-ID          ADDRESS      UPTIME
+;;; Residential customer 1
+0  cust001  pppoe    08:00:27:1C:47:B7  10.20.0.250  40s
+```
+
+`cust001` re-established with a fresh uptime, same address as before --- the VLAN move
+didn't change subscriber addressing, only the path. `/interface vlan print`:
+
+```
+#    NAME             MTU   ARP      VLAN-ID  INTERFACE
+;;; access VLAN for PPPoE
+0 R  vlan100-access   1500  enabled  100      ether3
+```
+
+`R` flag present --- VLAN interface is running, not just configured.
+
+**On CHR-CPE** --- `/ping 1.1.1.1 count=2`: sent=2 received=2 packet-loss=0%,
+avg-rtt=3ms863us. Internet still reachable over the tagged path, same as before the move.
+Screenshot: `screenshots/task08-01-vlan-tagged-ping-still-works.png`.
