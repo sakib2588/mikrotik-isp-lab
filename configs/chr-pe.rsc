@@ -1,4 +1,4 @@
-# 2026-08-13 11:30:09 by RouterOS 7.23.3
+# 2026-08-13 11:32:15 by RouterOS 7.23.3
 # system id = 1AAnjblFZFN
 #
 /interface bridge
@@ -24,6 +24,10 @@ add kind=pcq name=pcq-upload pcq-classifier=src-address pcq-rate=2M
 /queue simple
 add comment="shared access capacity" max-limit=20M/20M name=\
     subscriber-aggregate queue=pcq-upload/pcq-download target=10.20.0.0/24
+/routing ospf instance
+add disabled=no name=ospf-core router-id=10.255.255.1
+/routing ospf area
+add instance=ospf-core name=backbone
 /snmp community
 set [ find default=yes ] addresses=192.168.56.0/24 name=lab-ro
 /system logging action
@@ -103,6 +107,9 @@ add comment="Residential customer 2" name=cust002 profile=plan-10m service=\
 /radius
 add address=192.168.56.1 comment="FreeRADIUS on popos-mainpc" service=ppp \
     src-address=192.168.56.10 timeout=2s
+/routing ospf interface-template
+add area=backbone networks=10.255.0.0/30
+add area=backbone networks=10.255.255.1/32 passive
 /snmp
 set contact="Nazmus Sakib" enabled=yes location="Home lab, Dhaka"
 /system identity
