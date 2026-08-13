@@ -1,18 +1,20 @@
-# 2026-08-07 19:27:14 by RouterOS 7.23.3
+# 2026-08-13 11:48:18 by RouterOS 7.23.3
 # system id = C0/HVnWogkN
 #
 /interface ethernet
 set [ find default-name=ether1 ] disable-running-check=no
 set [ find default-name=ether2 ] disable-running-check=no
 set [ find default-name=ether3 ] disable-running-check=no
+/interface vlan
+add interface=ether1 name=vlan100-wan vlan-id=100
 /interface pppoe-client
-add add-default-route=yes disabled=no interface=ether1 name=pppoe-wan use-peer-dns=\
-    yes user=cust001
+add add-default-route=yes disabled=no interface=vlan100-wan name=pppoe-wan \
+    use-peer-dns=yes user=sakib2
 /ip pool
 add name=lan-pool ranges=192.168.88.100-192.168.88.200
 /ip address
-add address=192.168.56.11/24 comment="Temp management" interface=ether3 network=\
-    192.168.56.0
+add address=192.168.56.11/24 comment="Temp management" interface=ether3 \
+    network=192.168.56.0
 add address=192.168.88.1/24 comment="customer LAN" interface=ether2 network=\
     192.168.88.0
 /ip dhcp-client
