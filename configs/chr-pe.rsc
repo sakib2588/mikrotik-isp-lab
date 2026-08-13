@@ -1,4 +1,4 @@
-# 2026-08-13 11:32:15 by RouterOS 7.23.3
+# 2026-08-13 11:36:46 by RouterOS 7.23.3
 # system id = 1AAnjblFZFN
 #
 /interface bridge
@@ -24,6 +24,8 @@ add kind=pcq name=pcq-upload pcq-classifier=src-address pcq-rate=2M
 /queue simple
 add comment="shared access capacity" max-limit=20M/20M name=\
     subscriber-aggregate queue=pcq-upload/pcq-download target=10.20.0.0/24
+/routing bgp instance
+add as=65001 name=as65001 router-id=10.255.255.1
 /routing ospf instance
 add disabled=no name=ospf-core router-id=10.255.255.1
 /routing ospf area
@@ -107,6 +109,9 @@ add comment="Residential customer 2" name=cust002 profile=plan-10m service=\
 /radius
 add address=192.168.56.1 comment="FreeRADIUS on popos-mainpc" service=ppp \
     src-address=192.168.56.10 timeout=2s
+/routing bgp connection
+add instance=as65001 local.address=10.255.255.1 .role=ibgp name=core-link \
+    nexthop-choice=force-self remote.address=10.255.255.2 .as=65001
 /routing ospf interface-template
 add area=backbone networks=10.255.0.0/30
 add area=backbone networks=10.255.255.1/32 passive
