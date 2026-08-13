@@ -1,4 +1,4 @@
-# 2026-08-13 11:36:51 by RouterOS 7.23.3
+# 2026-08-13 11:40:39 by RouterOS 7.23.3
 # system id = 3ATNkTmtEHF
 #
 /interface bridge
@@ -22,11 +22,27 @@ add address=172.16.0.1/30 interface=ether2 network=172.16.0.0
 add address=10.255.0.2/30 interface=ether1 network=10.255.0.0
 /ip dhcp-client
 add interface=ether1 name=client1
+/ip firewall address-list
+add address=192.0.2.0/24 list=MY-NETWORKS
+/ip route
+add blackhole dst-address=192.0.2.0/24
 /routing bgp connection
-add instance=as65001 local.address=172.16.0.1 .role=ebgp name=upstream-link \
+add disabled=no instance=as65001 local.address=172.16.0.1 .role=ebgp name=\
+    upstream-link output.filter-chain=upstream-out .network=MY-NETWORKS \
     remote.address=172.16.0.2 .as=65002
 add instance=as65001 local.address=10.255.255.2 .role=ibgp name=pe-link \
     nexthop-choice=force-self remote.address=10.255.255.1 .as=65001
+add input.filter=bdix-in instance=as65001 local.address=10.99.0.1 .role=ebgp \
+    name=bdix-link nexthop-choice=force-self output.filter-chain=bdix-out \
+    .network=MY-NETWORKS remote.address=10.99.0.2 .as=65100
+/routing filter rule
+add chain=bdix-in rule="if (dst in 198.51.100.0/24 && dst-len in 24-24) { set \
+    bgp-local-pref 200; accept; }"
+add chain=bdix-in rule="reject;"
+add chain=bdix-out rule="if (dst == 192.0.2.0/24) { accept; }"
+add chain=bdix-out rule="reject;"
+add chain=upstream-out rule="if (dst == 192.0.2.0/24) { accept; }"
+add chain=upstream-out rule="reject;"
 /routing ospf interface-template
 add area=backbone networks=10.255.0.0/30
 add area=backbone networks=10.255.255.2/32 passive
