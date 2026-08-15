@@ -99,13 +99,17 @@ in this build) and recorded the specific failure --- an SNMP timeout on the sysU
 a generic "down". The router was then powered back on and confirmed reachable again at the
 network layer (`ping`, `snmpwalk`) before moving on.
 
-## Honest limitation --- screenshots not yet captured
+## Screenshots
 
-The two screenshots this task originally called for (all-green device list; the outage caught
-live in the web UI) were **not captured**, because this session ran the whole task
-non-interactively over SSH and the Zabbix API, with no browser driving the GUI. The evidence
-above is the CLI/API-equivalent of both: the `host.get` output for the all-green state, and the
-`available` flip plus SNMP timeout error for the outage state. **Still open:** log into
-`http://localhost:8081` (Admin/zabbix), open Monitoring > Hosts, and capture the two screenshots
-for the portfolio. Reproducing the outage for the second screenshot only needs
-`VBoxManage controlvm CHR-BDIX poweroff` again.
+Captured 2026-08-16, Monitoring > Hosts in the actual web UI (not staged text):
+
+- `screenshots/task07-04-nms-hosts-all-green.png` --- all four CHR routers (PE, CORE, UPSTREAM,
+  BDIX) showing green SNMP availability.
+- `screenshots/task07-05-nms-outage-detected.png` --- same page, reloaded after
+  `VBoxManage controlvm CHR-BDIX poweroff`, showing CHR-BDIX's SNMP badge flipped red while the
+  other three stay green.
+
+CHR-BDIX was powered back on and confirmed reachable again (`snmpwalk` succeeding) immediately
+after the second capture. The `host.get`/outage-poll evidence above was gathered first and is
+kept as the CLI/API-equivalent trail; the two screenshots are the visual confirmation of the
+same underlying state, not a replacement for it.
