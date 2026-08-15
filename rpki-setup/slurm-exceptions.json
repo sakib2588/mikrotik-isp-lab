@@ -1,0 +1,18 @@
+{
+  "slurmVersion": 1,
+  "validationOutputFilters": {
+    "prefixFilters": [],
+    "bgpsecFilters": []
+  },
+  "locallyAddedAssertions": {
+    "prefixAssertions": [
+      {
+        "asn": 65002,
+        "prefix": "203.0.113.0/24",
+        "maxPrefixLength": 24,
+        "comment": "CHR-UPSTREAM's real originated prefix, correct origin AS65002 -- validates 'valid'. docs/08-rpki.md records the invalid-verdict test that briefly set this to asn=65999 and confirmed the route was rejected; restored to the correct value afterward so the lab's resting state is healthy."
+      }
+    ],
+    "bgpsecAssertions": []
+  }
+}
