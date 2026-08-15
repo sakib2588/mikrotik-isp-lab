@@ -1,4 +1,4 @@
-# 2026-08-13 11:40:39 by RouterOS 7.23.3
+# 2026-08-15 10:23:59 by RouterOS 7.23.3
 # system id = 3ATNkTmtEHF
 #
 /interface bridge
@@ -14,6 +14,8 @@ add as=65001 name=as65001 router-id=10.255.255.2
 add disabled=no name=ospf-core router-id=10.255.255.2
 /routing ospf area
 add instance=ospf-core name=backbone
+/snmp community
+set [ find default=yes ] addresses=192.168.56.0/24 name=lab-ro
 /ip address
 add address=192.168.56.12/24 interface=ether4 network=192.168.56.0
 add address=10.99.0.1/30 interface=ether3 network=10.99.0.0
@@ -46,5 +48,7 @@ add chain=upstream-out rule="reject;"
 /routing ospf interface-template
 add area=backbone networks=10.255.0.0/30
 add area=backbone networks=10.255.255.2/32 passive
+/snmp
+set contact="Nazmus Sakib" enabled=yes location="Home lab, Dhaka"
 /system identity
 set name=CHR-CORE

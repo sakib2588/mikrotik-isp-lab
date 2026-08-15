@@ -2,3 +2,5 @@
 *.vbox
 *.zip
 *.backup
+.env
+nms-setup/.env
